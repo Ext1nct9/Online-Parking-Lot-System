@@ -1,0 +1,144 @@
+namespace ca.mcgill.ecse321.opls.model;
+
+// Utility models
+class Schedule {
+    abstract;
+    
+    unique int id;              // Primary key of this class
+    
+    enum Day { SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY };
+    Day day;
+    
+    depend java.sql.Time;
+    Time startTime;
+    Time endTime;
+}
+
+// Configuration class
+class ParkingLotSystem {
+    unique String id;           // Primary key of this class
+    String displayName;         // Name to display on the application
+
+    Boolean isActive;           // Only one configuration can be active at once
+
+    Double monthlyFee;          // In dollars
+
+    Double incrementFee;        // Dollars per increment
+    Integer incrementTime;      // In minutes
+    Integer maxIncrementTime;   // In minutes
+}
+
+class ParkingLotSystemSchedule {
+	isA Schedule;
+	
+	* -- 1 ParkingLotSystem parkingLotSystem;
+}
+
+// Account
+class UserAccount {
+	unique int id;              // Primary key of this class
+
+    depend java.util.UUID;
+    unique UUID uuid;           // External ID of the instance
+    
+    unique String username;     // User's username
+    
+    String firstName;           // First name of person associated to this account
+    String lastName;            // Last name of person associated to this account
+
+    String passwordHash;        // Stored as base64url string after hashing
+    String passwordHashSalt;    // Stored as base64url string after random generation
+
+    String securityQuestion;    // Password reset question and answer
+    String securityAnswerHash;          // Stored as base64url string after encryption
+    String securityAnswerHashSalt;      // Stored as base64url string after random generation
+}
+
+class Employee {
+    0..1 -- 1 UserAccount userAccount;
+
+	unique int id;              // Primary key of this class
+
+    depend java.util.UUID;
+    unique UUID uuid;           // External ID of the instance
+
+    String title;               // Job title of employee
+    Double salary;              // In dollars
+}
+
+class EmployeeSchedule {
+	isA Schedule;
+	
+	* -- 1 Employee employee;
+}
+
+class Customer {
+    0..1 -- 1 UserAccount userAccount;
+
+	unique int id;              // Primary key of this class
+
+    depend java.util.UUID;
+    unique UUID uuid;           // External ID of the instance
+
+    String savedLicensePlate;   // Null if the customer does not have a saved license plate.
+
+    String billingAccountId;    // Null if the customer does not have a saved billing profile.
+}
+
+class Booking {
+    abstract;
+    
+    unique int id;              // Primary key of this class
+
+    depend java.util.UUID;
+    unique UUID uuid;           // External ID of the instance
+
+    enum BookingStatus { REQUESTED, CONFIRMED, PAID };
+    BookingStatus status;
+
+	depend java.sql.Date;
+    Date startDate;             // Start date and time of the booking
+    Date endDate;               // End date and time of the booking
+
+    * -- 0..1 Customer customer;    // The booking may not have been made by a registered user, in which case the multiplicity would be zero customer
+
+    String confirmationNumber;      // Confirmation number to verify the user's association to the reservation
+
+    String licensePlate;        // License plate associated with the booking
+}
+
+class ParkingSpotBooking {
+    isA Booking;
+
+    * -- 0..1 ParkingSpot parkingSpot;  // Spot may be pending, in which case the multiplicity would be zero parking spot
+
+    String billingAccountId;            // Not null if the reservation is monthly and should be paid automatically
+}
+
+class ParkingSpot {
+    unique String id;           // Primary key of this class
+
+    enum VehicleType { Regular, Large };
+    VehicleType vehicleType;
+
+    enum ParkingSpotStatus { Open,      // Can be parked in (reserved or public)
+                             Closed     // Nobody can park here
+                             };
+    ParkingSpotStatus parkingSpotStatus;
+
+    String message;             // If there is a message associated with the parking spot to be displayed
+}
+
+class VehicleServiceBooking {
+    isA Booking;
+
+    * -- 1 VehicleService vehicleService;
+}
+
+class VehicleService {
+    unique String id;           // Primary key of this class
+    String displayName;         // Name to display on the application
+
+    Integer duration;           // In minutes
+    Double fee;                 // Service fee
+}

@@ -1,0 +1,49 @@
+use OPLS.ump;
+
+// not included in domain model, saved for later
+class AccessToken {
+    string oAuthClientId;
+    string username;
+    string displayName;
+    string savedLicensePlate;
+
+    depend java.util.UUID;
+    boolean isRegistered;
+    int userAccountId;
+    UUID employeeUUID;
+    UUID customerUUID;
+
+    depend java.util.List;
+    List<String> oAuthClaims;
+}
+
+class OAuthClient {
+	unique int id;              // Primary key of this class
+
+    depend java.util.UUID;
+    unique UUID uuid;           // External ID of the instance
+
+    string clientID;
+    string clientSecret;
+    string clientName;
+}
+
+class OAuthClientSession {
+	String refreshToken;		// Primary key of this class
+	long expiry;				// when the refresh token expires
+	
+	* -- 1 OAuthClient client;
+	* -- 0..1 UserAccount userAccount;
+}
+
+enum OAuthClaim {
+	NONE,
+    ADMIN,
+    EMPLOYEE,
+    CUSTOMER
+}
+
+class UserAccountClaim {
+	* -- 1 UserAccount userAccount;
+	OAuthClaim claim;
+}

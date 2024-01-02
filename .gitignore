@@ -1,0 +1,13 @@
+.idea/compiler.xml
+.idea/gradle.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/OPLS.iml
+.idea/vcs.xml
+.idea/project-group-08.iml
+.idea/workspace.xml
+.idea/inspectionProfiles/profiles_settings.xml
+*settings.json
+*gradlew
+*.DS_Store
